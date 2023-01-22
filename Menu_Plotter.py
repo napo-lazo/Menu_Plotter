@@ -2,26 +2,50 @@ class Menu_Plotter:
     _Nodes = {}
     _currentNode = None
 
-    def AddMenuNode(self, id: str, menuOptions: list):
+    def AddMenuNode(self, id: str, menuOptions: list, neighborNodesIds: list):
         if (id not in self._Nodes):
-            self._Nodes[id] = _MenuNode(menuOptions)
+            self._Nodes[id] = _MenuNode(menuOptions, neighborNodesIds)
 
     def SetStartNode(self, id: str):
         self._currentNode = self._Nodes[id]
 
     def ActivateCurrentNode(self):
-        self._currentNode.ActivateNode()
+        while (True):
+            nextNodeId = self._currentNode.ActivateNode()
+            self._currentNode = self._Nodes[nextNodeId]
+
 
 class _MenuNode:
     _menuOptions = []
-    neighborNodes = []
+    _neighborNodesIds = []
 
-    def __init__(self, menuOptions: list):
+    def __init__(self, menuOptions: list, neighborNodesIds: list):
         self._menuOptions = menuOptions
+        self._neighborNodesIds = neighborNodesIds
 
-    def ActivateNode(self):
-        optionNumber = 1
+    def ActivateNode(self) -> str:
+        invalidInput = True
 
-        for option in self._menuOptions:
-            print(f"{optionNumber} - {option}")
-            optionNumber += 1
+        while (invalidInput):
+            optionNumber = 1
+
+            for option in self._menuOptions:
+                print(f"{optionNumber} - {option}")
+                optionNumber += 1
+            
+            userInput = input()
+
+            try:
+                userInput = int(userInput)
+            except ValueError:
+                print("ERROR: Type a valid number from the options' list to proceed")
+                continue
+
+            if (userInput > 0 and userInput <= optionNumber):
+                invalidInput = False
+            else:
+                print("ERROR: Type a valid number from the options' list to proceed")
+                continue
+        
+        return self._neighborNodesIds[userInput - 1]
+        
