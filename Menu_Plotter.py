@@ -12,6 +12,10 @@ class Menu_Plotter:
     def ActivateCurrentNode(self):
         while (True):
             nextNodeId = self._currentNode.ActivateNode()
+
+            if (nextNodeId.lower() == "exit"):
+                break
+
             self._currentNode = self._Nodes[nextNodeId]
 
 
@@ -41,11 +45,10 @@ class _MenuNode:
                 print("ERROR: Type a valid number from the options' list to proceed")
                 continue
 
-            if (userInput > 0 and userInput <= optionNumber):
+            if (userInput > 0 and userInput <= optionNumber - 1):
                 invalidInput = False
             else:
                 print("ERROR: Type a valid number from the options' list to proceed")
                 continue
         
         return self._neighborNodesIds[userInput - 1]
-        
