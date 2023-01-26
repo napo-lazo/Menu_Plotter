@@ -5,6 +5,10 @@ class Menu_Plotter:
     def AddMenuNode(self, id: str, menuOptions: list, neighborNodesIds: list):
         if (id not in self._Nodes):
             self._Nodes[id] = _MenuNode(menuOptions, neighborNodesIds)
+    
+    def AddActionNode(self, id: str, action: callable, neighborNodesIds: list, resultInterpreter: callable = None):
+        if (id not in self._Nodes):
+            self._Nodes[id] = _ActionNode(action, neighborNodesIds, resultInterpreter)
 
     def SetStartNode(self, id: str):
         self._currentNode = self._Nodes[id]
@@ -52,3 +56,23 @@ class _MenuNode:
                 continue
         
         return self._neighborNodesIds[userInput - 1]
+    
+class _ActionNode:
+    _action = None
+    _neighborNodesIds = []
+    _resultInterpreter = None
+
+    def __init__(self, action: callable, neighborNodesIds: list, resultInterpreter: callable = None):
+        self._neighborNodesIds = neighborNodesIds
+        self._action = action
+        self._resultInterpreter = resultInterpreter
+
+    def ActivateNode(self):
+        idIndex = 0
+        
+        self._action()
+
+        if (self._resultInterpreter is not None):
+            idIndex = self._resultInterpreter()
+
+        return self._neighborNodesIds[idIndex]
