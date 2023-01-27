@@ -2,9 +2,9 @@ class Menu_Plotter:
     _Nodes = {}
     _currentNode = None
 
-    def AddMenuNode(self, id: str, menuOptions: list, neighborNodesIds: list):
+    def AddMenuNode(self, id: str, menuOptions: list, neighborNodesIds: list, header: str = None, footer: str = None):
         if (id not in self._Nodes):
-            self._Nodes[id] = _MenuNode(menuOptions, neighborNodesIds)
+            self._Nodes[id] = _MenuNode(menuOptions, neighborNodesIds, header, footer)
     
     def AddActionNode(self, id: str, action: callable, neighborNodesIds: list, resultInterpreter: callable = None):
         if (id not in self._Nodes):
@@ -26,10 +26,15 @@ class Menu_Plotter:
 class _MenuNode:
     _menuOptions = []
     _neighborNodesIds = []
+    _header = None
+    _footer = None
 
-    def __init__(self, menuOptions: list, neighborNodesIds: list):
+    def __init__(self, menuOptions: list, neighborNodesIds: list, header: str = None, footer: str = None):
         self._menuOptions = menuOptions
         self._neighborNodesIds = neighborNodesIds
+        self._header = header
+        self._footer = footer
+        
 
     def ActivateNode(self) -> str:
         invalidInput = True
@@ -37,10 +42,16 @@ class _MenuNode:
         while (invalidInput):
             optionNumber = 1
 
+            if (self._header is not None):
+                print(self._header)
+
             for option in self._menuOptions:
                 print(f"{optionNumber} - {option}")
                 optionNumber += 1
             
+            if (self._footer is not None):
+                print(self._footer)
+
             userInput = input()
 
             try:
