@@ -8,11 +8,11 @@ def printBalance():
 def withdrawMoney():
     print("You have withdrawn $500")
 
-Menu.AddMenuNode("start", ["Show Balance", "Withdraw", "Exit"], ["print", "withdraw", "exit"], "Welcome", "Thanks for choosing us")
-Menu.AddActionNode("print", printBalance, ["start"])
-Menu.AddMenuNode("print", ["Back"], ["start"])
-Menu.AddActionNode("withdraw", withdrawMoney, ["start"])
-Menu.AddMenuNode("withdraw", ["Back"], ["start"])
+Menu.AddMenuNode("start", ["print", "withdraw", "exit"], ["Show Balance", "Withdraw", "Exit"], "Welcome", "Thanks for choosing us")
+Menu.AddActionNode("print", ["printMenu"], printBalance)
+Menu.AddMenuNode("printMenu", ["start"], ["Back"])
+Menu.AddActionNode("withdraw", ["withdrawMenu"], withdrawMoney)
+Menu.AddMenuNode("withdrawMenu", ["start"], ["Back"])
 
 Menu.SetStartNode("start")
 Menu.ActivateCurrentNode()

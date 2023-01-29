@@ -1,40 +1,29 @@
-class Menu_Plotter:
-    _Nodes = {}
-    _currentNode = None
+from abc import ABC, abstractmethod
 
-    def AddMenuNode(self, id: str, menuOptions: list, neighborNodesIds: list, header: str = None, footer: str = None):
-        if (id not in self._Nodes):
-            self._Nodes[id] = _MenuNode(menuOptions, neighborNodesIds, header, footer)
-    
-    def AddActionNode(self, id: str, action: callable, neighborNodesIds: list, resultInterpreter: callable = None):
-        if (id not in self._Nodes):
-            self._Nodes[id] = _ActionNode(action, neighborNodesIds, resultInterpreter)
+class _Node(ABC):
+    _neighborNodesIds: list
 
-    def SetStartNode(self, id: str):
-        self._currentNode = self._Nodes[id]
+    def __init__(self, neighborNodesIds: list):
+        if (len(neighborNodesIds) == 0):
+            raise ValueError("neighborNodesIds must not be an empty list")
 
-    def ActivateCurrentNode(self):
-        while (True):
-            nextNodeId = self._currentNode.ActivateNode()
-
-            if (nextNodeId.lower() == "exit"):
-                break
-
-            self._currentNode = self._Nodes[nextNodeId]
-
-
-class _MenuNode:
-    _menuOptions = []
-    _neighborNodesIds = []
-    _header = None
-    _footer = None
-
-    def __init__(self, menuOptions: list, neighborNodesIds: list, header: str = None, footer: str = None):
-        self._menuOptions = menuOptions
         self._neighborNodesIds = neighborNodesIds
+
+    @abstractmethod
+    def ActivateNode(self) -> str:
+        ...
+
+class _MenuNode(_Node):
+    _menuOptions: list
+    _header: str
+    _footer: str
+
+    def __init__(self, neighborNodesIds: list, menuOptions: list, header: str = None, footer: str = None):
+        super().__init__(neighborNodesIds)
+        
+        self._menuOptions = menuOptions
         self._header = header
         self._footer = footer
-        
 
     def ActivateNode(self) -> str:
         invalidInput = True
@@ -68,17 +57,17 @@ class _MenuNode:
         
         return self._neighborNodesIds[userInput - 1]
     
-class _ActionNode:
-    _action = None
-    _neighborNodesIds = []
-    _resultInterpreter = None
+class _ActionNode(_Node):
+    _action: callable
+    _resultInterpreter: callable
 
-    def __init__(self, action: callable, neighborNodesIds: list, resultInterpreter: callable = None):
-        self._neighborNodesIds = neighborNodesIds
+    def __init__(self, neighborNodesIds: list, action: callable, resultInterpreter: callable = None):
+        super().__init__(neighborNodesIds)
+
         self._action = action
         self._resultInterpreter = resultInterpreter
 
-    def ActivateNode(self):
+    def ActivateNode(self) -> str:
         idIndex = 0
         
         self._action()
@@ -87,3 +76,31 @@ class _ActionNode:
             idIndex = self._resultInterpreter()
 
         return self._neighborNodesIds[idIndex]
+
+class Menu_Plotter:
+    _Nodes: dict = {}
+    _currentNode: _Node
+
+    def AddMenuNode(self, id: str, neighborNodesIds: list, menuOptions: list,  header: str = None, footer: str = None) -> None:
+        if (id not in self._Nodes):
+            self._Nodes[id] = _MenuNode(neighborNodesIds, menuOptions, header, footer)
+        else:
+            raise ValueError(f"Id '{id}' is already in use")
+    
+    def AddActionNode(self, id: str, neighborNodesIds: list, action: callable, resultInterpreter: callable = None) -> None:
+        if (id not in self._Nodes):
+            self._Nodes[id] = _ActionNode(neighborNodesIds, action, resultInterpreter)
+        else:
+            raise ValueError(f"Id '{id}' is already in use")
+
+    def SetStartNode(self, id: str) -> None:
+        self._currentNode = self._Nodes[id]
+
+    def ActivateCurrentNode(self) -> None:
+        while (True):
+            nextNodeId = self._currentNode.ActivateNode()
+
+            if (nextNodeId.lower() == "exit"):
+                break
+
+            self._currentNode = self._Nodes[nextNodeId]
