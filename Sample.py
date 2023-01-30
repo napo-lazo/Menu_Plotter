@@ -15,4 +15,4 @@ Menu.AddActionNode("withdraw", ["withdrawMenu"], withdrawMoney)
 Menu.AddMenuNode("withdrawMenu", ["start"], ["Back"])
 
 Menu.SetStartNode("start")
-Menu.ActivateCurrentNode()
+Menu.Start()
