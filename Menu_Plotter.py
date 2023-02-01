@@ -121,9 +121,10 @@ class Menu_Plotter:
         '''
         Adds an action node to the pool of nodes.
         A list with the ids of its neighbor nodes must be provided, as well as a function that will be
-        the action triggered when activating the node.
-        Optionally, if there are more than one neighbor nodes, a resultInterpreter function can be passed
-        to translate the result of the action function.
+        triggered when activating the node.
+        Optionally, if there are more than one neighbor nodes, a resultInterpreter function must be passed
+        to translate the result of the action function, otherwise the node will default to go through the 
+        first option in the neighborNodesIds.
         '''
         if (id not in self._Nodes):
             self._Nodes[id] = _ActionNode(neighborNodesIds, action, resultInterpreter)
