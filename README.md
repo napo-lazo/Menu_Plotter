@@ -1,5 +1,5 @@
 # Menu_Plotter
-A python library that allows for quick and easy creation and traversal of menus for console-based menus.
+A python library that allows for quick and easy creation and traversal of menus for console-based scripts.
 # Features
 - Allows easy traversal through menu screens via a numeric input
 - Allows to easily incorporate actions to the options of the menu.
